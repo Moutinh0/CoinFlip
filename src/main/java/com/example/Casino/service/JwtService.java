@@ -8,11 +8,27 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.function.Function;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 @Service
 public class JwtService {
 
-    private final String SECRET_KEY = "4dG7kN!@b8^2Z$6eHpL0xYvR#1W9qA5C";
+    //private final String SECRET_KEY = "NGRHN2tONEBiOCoyWiQ2ZUhwbDB4WXZSIzFXOXFBNUM";
+
+    // Генерация случайного секретного ключа
+    private final SecretKey SECRET_KEY = generateSecretKey();
+
+    // Метод для генерации случайного ключа
+    private SecretKey generateSecretKey() {
+        try {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
+            keyGenerator.init(256); // Размер ключа 256 бит
+            return keyGenerator.generateKey();
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка генерации ключа", e);
+        }
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

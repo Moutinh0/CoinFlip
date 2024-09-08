@@ -23,6 +23,7 @@ public class UserController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    /*
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRegistrationRequest request) {
         try {
@@ -43,6 +44,22 @@ public class UserController {
             return ResponseEntity.ok(new JwtResponse(token));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
+    }
+*/
+    @GetMapping("/profile")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        // Извлечение email из UserDetails
+        System.out.println(authentication);
+        String email = authentication.getName(); // Получаем email из UserDetails
+        System.out.println(email);
+        // Поиск пользователя по email
+        Users user = userService.findByEmail(email);
+
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
     }
 }
