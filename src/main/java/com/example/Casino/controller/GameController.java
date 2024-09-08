@@ -38,10 +38,13 @@ public class GameController {
         String result = Math.random() < 0.5 ? "HEADS" : "TAILS";
         boolean win = result.equalsIgnoreCase(guess);
 
+
         if (win) {
+            userService.saveBetHistory(user, betAmount, "WIN","COINFLIP");
             userService.updateBalance(user, user.getBalance() + betAmount);
             return ResponseEntity.ok("You win! New balance: " + user.getBalance());
         } else {
+            userService.saveBetHistory(user, betAmount, "LOSE","COINFLIP");
             userService.updateBalance(user, user.getBalance() - betAmount);
             return ResponseEntity.ok("You lose! New balance: " + user.getBalance());
         }

@@ -3,6 +3,7 @@ import com.example.Casino.DTO.JwtResponse;
 import com.example.Casino.DTO.LoginRequest;
 import com.example.Casino.DTO.UserRegistrationRequest;
 import com.example.Casino.JWT.JwtTokenUtil;
+import com.example.Casino.model.BetHistory;
 import com.example.Casino.model.Users;
 import com.example.Casino.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -61,5 +64,20 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
+    }
+
+
+
+    @GetMapping("/bet-history")
+    public ResponseEntity<?> getBetHistory(Authentication authentication) {
+        System.out.println(authentication);
+        String email = authentication.getName();
+        System.out.println(email);
+        Users user = userService.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        List<BetHistory> history = userService.getBetHistory(user);
+        return ResponseEntity.ok(history);
     }
 }

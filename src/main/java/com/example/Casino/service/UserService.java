@@ -1,15 +1,19 @@
 package com.example.Casino.service;
 
+import com.example.Casino.model.BetHistory;
 import com.example.Casino.model.Users;
 
 import com.example.Casino.repoz.UserRepository;
+import com.example.Casino.repoz.BetHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -19,6 +23,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private BetHistoryRepository betHistoryRepository;
 
     public boolean registerUser(String email, String password, String phoneNumber) {
         if (userRepository.findByEmail(email) != null) {
@@ -56,4 +63,19 @@ public class UserService {
         return builder.build();
     }
 
+
+
+    public void saveBetHistory(Users user, double betAmount, String betResult, String game) {
+        BetHistory betHistory = new BetHistory();
+        betHistory.setUser(user);
+        betHistory.setBetAmount(betAmount);
+        betHistory.setBetResult(betResult);
+        betHistory.setBetTime(LocalDateTime.now());
+        betHistory.setGame(game);
+        betHistoryRepository.save(betHistory);
+    }
+
+    public List<BetHistory> getBetHistory(Users user) {
+        return betHistoryRepository.findByUser(user);
+    }
 }
